@@ -2,32 +2,29 @@ from pprint import pprint
 
 '''
 Cadence
-	from Latin cadō ("I fall, I cease"), Proto-Indo-European *ḱad- ("to fall").
-	Doublet of cadenza and chance. 
+	--from Latin cadō ("I fall, I cease").  Doublet of cadenza and chance.
 
-The act or state of declining or sinking.
-	A fall in inflection of a speaker’s voice, such as at the end of a sentence.
-	A progression of at least two chords which conclude a segment of music; musical punctuation; a clausula.
-	A move which ends a phrase in dance.
-
-Rhythmic flow. ("The cadence of life at the front is about to change.")
-	The measure or beat of movement.
-	The rhythm and sequence of a series of actions.
-	The number of steps per unit time.
-
-The general inflection or modulation of the voice, or of any sound.
-
-The cadence is that which closes itself by opening - the cork which makes the bottle.
+	That which closes - the cork which makes the bottle
+		Contrast prolongation: that which keeps open
+	The act or state of declining or sinking.
+		A fall in inflection of a speaker’s voice, such as at the end of a sentence.
+		A progression of at least two chords which conclude a segment of music; musical punctuation; a clausula.
+		A move which ends a phrase in dance.
+	Rhythmic flow. ("The cadence of life is about to change.")
+		The measure or beat of movement.
+		The rhythm and sequence of a series of actions.
+		The number of steps per unit time.
+	The general inflection or modulation of the voice, or of any sound.
 
 '''
 
-
 class Cadence(object):
 	"""a musical morpheme bundling rhythmic, gestural and harmonic features"""
-	def __init__(self, footprint=None, function=None, path=None):
+	def __init__(self, footprint=None, function=None, path=None, label=''):
 		self.footprint = footprint
 		self.function = function
 		self.path = path
+		self.label = label
 
 	# string represention of cadence - note list ?
 	def __str__(self):
@@ -47,6 +44,9 @@ class Cadence(object):
 		}
 		return features
 
+	def assignLabel(label):
+		self.label = label		
+
 	def update(featureDict):
 		if 'footprint' in featureDict:
 			self.footprint = featureDict['footprint']
@@ -61,7 +61,9 @@ class Cadence(object):
 			'function': self.function,
 			'path': self.path,
 		}
+		print("\nCadence", str(self.label))
 		pprint(features)
+		print()
 
 '''
 # example

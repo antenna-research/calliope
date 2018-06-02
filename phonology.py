@@ -10,6 +10,16 @@ class Phonology(object):
 		self.functions = functions
 		self.paths = paths
 
+	def print(self):
+		features = {
+			'footprints': self.footprints,
+			'functions': self.functions,
+			'paths': self.paths,
+		}
+		print("\nPhonology")
+		pprint(features)
+		print()
+
 	def addFootprintRule(self, footprintRule, weight=1):
 		self.footprints.append((footprintRule, weight))
 
@@ -19,9 +29,9 @@ class Phonology(object):
 	def addPathRule(self, pathRule, weight=1):
 		self.paths.append((pathRule, weight))
 
-	def makeCadence(self): # (duration=None, harmonicFilter=None)
+	def makeCadence(self, label=''): # (duration=None, harmonicFilter=None)
 		""" assemble bundle of features from phonology rules """
-		cadence = Cadence()
+		cadence = Cadence(label=label)
 		cadence.footprint = self.makeFootprint()
 		cadence.function = self.makeFunction()
 		cadence.path = self.makePath()

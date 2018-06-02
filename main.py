@@ -24,19 +24,19 @@ phonology.addFootprintRule([{
 	'foot': [[-1/2, 0, 1/2]],
 	'step': [[0, 1/2], [0, 1/2], [0, 1/2]],
 }])
-
 phonology.addFunctionRule({
 	'address': ['A1','B1'],
 	'transposition': [-1,0,1],
 })
-
 phonology.addPathRule({
 	'range': [2,3,4],
 	'figure': ['rampUp', 'rampDown'],
 	'tilt': ['float', 'dive'],
 })
 
-lex = phonology.makeCadence()
+phonology.print()
+
+lex = phonology.makeCadence(label=1)
 lex.print()
 
 syntax = Diagram()
