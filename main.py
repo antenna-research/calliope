@@ -1,6 +1,6 @@
 from phonology import *
 from diagram import *
-
+from grammar import *
 
 '''
 modules:
@@ -19,36 +19,6 @@ score.py 		list of n passages rendered to music21 score object
 	export()	to xml, midi, ly
 
 '''
-
-phonology = Phonology()
-
-phonology.addFootprintRule([{
-	'span': [2],
-	'gait': ['double','triple'],
-	'foot': [[-1/2, 0, 1/2]],
-	'step': [[0, 1/2], [0, 1/2], [0, 1/2]],
-}])
-phonology.addFunctionRule({
-	'address': ['A1','B1'],
-	'transposition': [-1,0,1],
-})
-phonology.addPathRule({
-	'range': [2,3,4],
-	'figure': ['rampUp', 'rampDown'],
-	'tilt': ['float', 'dive'],
-})
-
-morphology = Morphology()
-morphology.addAnticipationRule(['footprint'])
-morphology.addAnticipationRule(['tilt'])
-morphology.addAnticipationRule([])
-morphology.addProlongationRule(['address','transposition'])
-morphology.addProlongationRule(['address'])
-morphology.addProlongationRule(['figure','range'])
-morphology.addProlongationRule(['range'])
-morphology.addProlongationRule(['range','tilt'])
-
-
 
 # lexicon.addCategory()
 
