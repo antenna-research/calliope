@@ -57,9 +57,7 @@ class Cadence(object):
 			'function': self.function,
 			'path': self.path,
 		}
-		print("\nCadence")
 		pprint(features)
-		print()
 
 '''
 # example

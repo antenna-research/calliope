@@ -2,16 +2,12 @@ from cadence import *
 from numpy import array
 from numpy.random import choice, seed
 
-
-
 class Grammar(object):
 
 	def __init__(self, phonology=None, morphology=None, syntax=None):
-		self.phonology
-		self.morphology
-		self.syntax
-
-
+		self.phonology = phonology
+		self.morphology = morphology
+		self.syntax = syntax
 
 
 class Phonology(object):
@@ -123,6 +119,12 @@ class Morphology(object):
 
 	def addProlongationRule(self, projectedFeatures):
 		self.prolongationRules.append(projectedFeatures)
+
+	def selectAnticipation(self):
+		return choice(self.anticipationRules)
+
+	def selectProlongation(self):
+		return choice(self.prolongationRules)
 
 	def print(self):
 		features = {

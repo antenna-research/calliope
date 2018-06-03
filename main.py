@@ -1,5 +1,6 @@
-from diagram import *
 from grammar import *
+from lexicon import *
+from passage import *
 from spec import *
 
 '''
@@ -10,24 +11,33 @@ projection.py	dependencies and agreement
 				antecedent or consequent cadence bundled with prolongation rules for each feature - (dominates) or (dominates, agrees) or (dominates, agrees, submits)
 				(1)==Head; (0)==Complement; (1,0)==XP; (1,1)==XBar; (0,1)==X; (0,0)==None; 
 
-diagram.py		define binary tree structures
 phonology.py	distribution of cadential features for given grammar
 lexicon.py		repository of lexemes: (cadence, dependencies, prolongation)
-passage.py		lexemes unified over tree diagram
+passage.py		lexemes unified over binary tree
 	spellout()	sequence of unified cadences in passage (for each voice)
 score.py 		list of n passages rendered to music21 score object
-	export()	to xml, midi, ly
+	export()	to xml, midi, ly'
 
 '''
 
 # lexicon.addCategory()
 
-phonology.print()
-morphology.print()
+g.phonology.print()
+g.morphology.print()
 
-lexeme = phonology.makeCadence()
-lexeme.print()
+lexicon = Lexicon()
+lexicon.populate(g, 4)
+lexicon.print()
 
-syntax = Diagram()
-syntax.print()
+passage = Passage(size=12)
+passage.printSyntax()
+
+realization = passage.spellout(lexicon)
+
+pprint(realization)
+
+for lex in realization:
+	lex.print()
+
+
 
