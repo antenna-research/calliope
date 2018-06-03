@@ -98,3 +98,27 @@ class Phonology(object):
 		path['tilt'] = choice(pathRule['tilt'])
 
 		return path
+
+
+class Morphology(object):
+
+	def __init__(self):
+		self.anticipationRules = []
+		self.prolongationRules = []
+
+	def addAnticipationRule(self, projectedFeatures):
+		self.anticipationRules.append(projectedFeatures)
+
+	def addProlongationRule(self, projectedFeatures):
+		self.prolongationRules.append(projectedFeatures)
+
+	def print(self):
+		features = {
+			'anticipations': self.anticipationRules,
+			'prolongations': self.prolongationRules,
+		}
+		print("\nMorphology")
+		pprint(features)
+		print()
+
+
