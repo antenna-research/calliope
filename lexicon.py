@@ -35,7 +35,7 @@ class Lexicon(object):
 	def nextLabel(self):
 		nextLabel = 0
 		if len(self.categories) > 0:
-			lexeme = self.categories[-1].label + 1
+			nextLabel = self.categories[-1].label + 1
 		return nextLabel
 
 	def print(self):
@@ -62,6 +62,7 @@ class Lexeme(object):
 		self.label = 'unlabeled'
 
 	def print(self):
+		print("\n"+str(self.label))
 		self.cadence.print()
 		print("anticipation:", self.anticipation)
 		print("prolongation:", self.prolongation)

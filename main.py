@@ -30,14 +30,14 @@ lexicon.populate(g, 4)
 lexicon.print()
 
 passage = Passage(size=12)
-passage.printSyntax()
 
 realization = passage.spellout(lexicon)
-
-pprint(realization)
+passage.printSyntax()
 
 for lex in realization:
 	lex.print()
 
+# next: go through spellout, create musical data, append to music21 score
+# then: add good lexemes, dependency of good lexeme pairs to lexicon pre-population, iteratively...
 
 

@@ -16,15 +16,16 @@ class Passage(object):
 		for i, node in enumerate(self.tree.levelorder):
 			node.value = i
 			node.unify = {}
+		self.unified = []
 
 	def printSyntax(self):
 		print(self.tree)
 
 	def spellout(self, lexicon):
-
 		# prolonged features trickle down to leaves
 		for node in self.tree.levelorder:
 			node.lexeme = lexicon.selectLexeme()
+			node.value = node.lexeme.label
 
 			if node.left:
 				node.left.unify = copy(node.unify)
@@ -49,7 +50,7 @@ class Passage(object):
 
 		spellout = []
 		# now read out nodes into list, with prolonged features replacing lexical features
-		for node in self.tree.levelorder:
+		for node in self.tree.inorder:
 			next_lexeme = deepcopy(node.lexeme)
 			for feat in node.unify.keys():
 				if feat == 'footprint':
@@ -59,6 +60,7 @@ class Passage(object):
 				if feat in ['range','figure','tilt']:
 					next_lexeme.cadence.path[feat] = node.unify[feat]
 			spellout.append(next_lexeme)
+		self.unified = spellout
 		return spellout
 
 

@@ -3,16 +3,26 @@ from grammar import *
 footprintRules = [
 	[{
 		'span': [2],
-		'gait': ['double','triple'],
+		'gait': ['double'],
 		'foot': [[-1/2, 0, 1/2]],
 		'step': [[0, 1/2], [0, 1/2], [0, 1/2]],
+	}],
+	[{
+		'span': [4],
+		'gait': ['triple'],
+		'foot': [[-1/2, 0, 1/2]],
+		'step': [[0], [1/2], [0]],
 	}],
 ]
 
 functionRules = [
 	{
 	'address': ['A1','B1'],
-	'transposition': [-1,0,1],
+	'transposition': [-1],
+	},
+	{
+	'address': ['C1','D1'],
+	'transposition': [0],
 	},
 ]
 
@@ -21,6 +31,11 @@ pathRules = [
 	'range': [2,3,4],
 	'figure': ['rampUp', 'rampDown'],
 	'tilt': ['float', 'dive'],
+	},
+	{
+	'range': [5,6,7],
+	'figure': ['stepUp', 'stepDown'],
+	'tilt': ['rise', 'fall'],
 	},
 ]
 
