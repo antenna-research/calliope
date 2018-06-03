@@ -1,23 +1,41 @@
-from phonology import *
+from grammar import *
 from numpy.random import choice, seed
 
 class Lexicon(object):
-	def makeLexeme(self):
+
+	def __init__(self, genesis_size=0):
+		self.categories = []
+
+	def generate(self, grammar, number_categories=0):
+		for x in range(number):
+			cadence = 
+			anticipation = 
+			prolongation = 
+			lexeme = Lexeme(cadence, anticipation, prolongation)
+			self
+
+	def addLexeme():
+
+	def makeCategory():
+
+
+	def makeLexeme(cadence, anticipation=None, prolongation=None):
+		
+
 	def makeProjection(self):
+		pass
 
 class Lexeme(object):
 	"""the specification of an dependant and its agreement"""
-	def __init__(self, cadence=None, antecedent=None, consequent=None):
+	def __init__(self, cadence=None, anticipation=None, prolongation=None):
 		if cadence=None:
 		self.cadence = cadence
 		# lexemes
 		self.antecedents = []
 		self.consequents = []
 		# projections
-		self.anticipations = []
-		self.prolongations = []
-
-		# self.label -- manage serial numbers somehow
+		self.anticipation = anticipation
+		self.prolongation = prolongation
 
 	def addAntecedent(self, category):
 		self.antecedents.append(category)

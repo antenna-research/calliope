@@ -1,6 +1,6 @@
-from phonology import *
 from diagram import *
 from grammar import *
+from spec import *
 
 '''
 modules:
@@ -25,7 +25,7 @@ score.py 		list of n passages rendered to music21 score object
 phonology.print()
 morphology.print()
 
-lexeme = phonology.makeCadence(label=1)
+lexeme = phonology.makeCadence()
 lexeme.print()
 
 syntax = Diagram()

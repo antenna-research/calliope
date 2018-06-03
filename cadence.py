@@ -20,11 +20,10 @@ Cadence
 
 class Cadence(object):
 	"""a musical morpheme bundling rhythmic, gestural and harmonic features"""
-	def __init__(self, footprint=None, function=None, path=None, label=''):
+	def __init__(self, footprint=None, function=None, path=None):
 		self.footprint = footprint
 		self.function = function
 		self.path = path
-		self.label = label
 
 	# string represention of cadence - note list ?
 	def __str__(self):
@@ -44,9 +43,6 @@ class Cadence(object):
 		}
 		return features
 
-	def assignLabel(label):
-		self.label = label		
-
 	def update(featureDict):
 		if 'footprint' in featureDict:
 			self.footprint = featureDict['footprint']
@@ -61,7 +57,7 @@ class Cadence(object):
 			'function': self.function,
 			'path': self.path,
 		}
-		print("\nCadence", str(self.label))
+		print("\nCadence")
 		pprint(features)
 		print()
 
