@@ -25,6 +25,6 @@ def flatten(pool):
     return res
 
 def isOversliced(bars):
-	targets = [bar < 2.5 for bar in bars]
+	targets = [bar > 0 and bar < 2.5 for bar in bars]
 	return (True in targets)
 

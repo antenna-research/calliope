@@ -41,6 +41,7 @@ realization = passage.spellout(lexicon)
 passage.setMeter()
 print(passage.tree)
 print(passage.bars)
+print()
 
 
 # next: go through spellout, create musical data, append to music21 score

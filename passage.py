@@ -82,31 +82,28 @@ class Passage(object):
 		# depthScores = (flatten(depth(partitionedBars,0)))
 		# depthTransitions = [abs(depthScores[i]-depthScores[i+1]) for i in range(len(depthScores)-1) ]
 
-		print('bars',bars)
 		# print('depthScores',depthScores)
 		removedIndices = []
+		prolongedIndices = []
 		while isOversliced(bars):
-			bars, removedIndices = self.desliceBars(bars, removedIndices)
+			bars, removedIndices, prolongedIndices = self.desliceBars(bars, removedIndices, prolongedIndices)
 
-		print('bars',bars)		
 		removedIndices.sort()
 		removedIndices.reverse()
-		print('removedIndices',removedIndices)		
 		for index in removedIndices:
 			bars.pop(index)
-		print('bars',bars)
 
 		bars.insert(0, pickupBar)
 		self.bars = bars
 		return bars
 
 
-	def desliceBars(self, bars, removedIndices):
+	def desliceBars(self, bars, removedIndices, prolongedIndices):
 		# targets = [bar < 2.5 for bar in bars]
 		# i = targets.index(True)
 		targets = []
 		for b, bar in enumerate(bars):
-			if bar < 2.5:
+			if bar > 0 and bar < 2.5:
 				targets.append(self.tree.inorder[b].size)
 			else:
 				targets.append(0)
@@ -119,10 +116,7 @@ class Passage(object):
 		while next in removedIndices:
 			next += 1
 
-		print('targets', targets)
-		print('max(targets)', max(targets), 'targets.index(max(targets))', targets.index(max(targets)))
 		scores = [node.size for node in self.tree.inorder]
-		print('scores',scores)
 		if bars[i] < 2.5:
 			right = False
 			if i == 0 or prev < 0:
@@ -130,25 +124,27 @@ class Passage(object):
 			elif i == len(bars)-1 or next > len(bars)-1:
 				right = False
 			else:
-				if bars[i]+bars[next] < 6 and bars[i]+bars[prev] > 6:
+				if bars[i]+bars[next] < 5.5 and bars[i]+bars[prev] > 5.5:
 					right = True
-				elif bars[i]+bars[next] > 6 and bars[i]+bars[prev] < 6:
+				elif bars[i]+bars[next] > 5.5 and bars[i]+bars[prev] < 5.5:
 					right = False
 				else:
-					if scores[i] > scores[prev]:
+					if (scores[i] > scores[prev]) and (next not in prolongedIndices):
 						right = True
 					else:
 						right = False
 
 			if right == True:
 				bars[i] += bars[next]
-				# bars.pop(next)
+				bars[next] = 0.0
 				removedIndices.append(next)
+				prolongedIndices.append(i)
 			else:
 				bars[i] += bars[prev]
-				# bars.pop(prev)
+				bars[prev] = 0.0
 				removedIndices.append(prev)
-		return bars, removedIndices
+
+		return bars, removedIndices, prolongedIndices
 
 	def consolidate(self, bars):
 		# [[[3.0, [2.5, 2.5, [5.0, 4.5]]], [2.5, [5.0, 7.0], [7.0, 4.5]]], [3.0, [5.0, [4.5, 5.0, 7.0, 5.0]], [5.0, [[4.5, 5.0], [7.0, 7.0, 4.5]], 2.0]]]
@@ -194,7 +190,6 @@ class Passage(object):
 			newBars = []
 
 		return newBars
-
 
 	def incrementalSetMeter(self, durations, anacruses, landings):
 		firstChunk = -anacruses[0]
