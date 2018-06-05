@@ -47,7 +47,7 @@ class Phonology(object):
 
 	def makeFootprint(self):
 		# select footprint rule
-		weights = array([rule[1] for rule in self.functions])
+		weights = array([rule[1] for rule in self.footprints])
 		normalized_weights = weights.astype(float) / weights.sum()
 		footprintChoices = array(self.footprints)
 		index = choice(len(footprintChoices), p=normalized_weights)
@@ -65,9 +65,9 @@ class Phonology(object):
 			foot['span'] = choice(footRule['span'])
 			foot['gait'] = choice(footRule['gait'])
 			# timing options are per note:
-			foot['step'] = []
-			for steps in footRule['step']:
-				foot['step'].append( choice(steps) )
+			foot['sync'] = []
+			for steps in footRule['sync']:
+				foot['sync'].append( choice(steps) )
 			footprint.append(foot)
 
 		return footprint

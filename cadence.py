@@ -67,17 +67,17 @@ cad.footprint = [{
 	'span': 2,
 	'gait': 'double', # Gait.double or Gait['double']...
 	'foot': [-1/2, -1/4, 0, 1/2],
-	'step': [0, 0, 0, 1/2],
+	'sync': [0, 0, 0, 1/2],
 },{
 	'span': 1,
 	'gait': 'double',
 	'foot': [None],
-	'step': [None],
+	'sync': [None],
 },{
 	'span': 1,
 	'gait': 'double',
 	'foot': [-1/2, 0, 1/4, 1/2],
-	'step': [1/2, 0, 0, 0],
+	'sync': [1/2, 0, 0, 0],
 }]
 
 cad.function = {

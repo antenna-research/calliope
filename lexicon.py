@@ -61,6 +61,7 @@ class Lexeme(object):
 
 		self.label = 'unlabeled'
 
+
 	def print(self):
 		print("\n"+str(self.label))
 		self.cadence.print()

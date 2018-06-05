@@ -1,6 +1,7 @@
 from grammar import *
 from lexicon import *
 from passage import *
+from render import *
 from spec import *
 
 '''
@@ -15,27 +16,32 @@ phonology.py	distribution of cadential features for given grammar
 lexicon.py		repository of lexemes: (cadence, dependencies, prolongation)
 passage.py		lexemes unified over binary tree
 	spellout()	sequence of unified cadences in passage (for each voice)
-score.py 		list of n passages rendered to music21 score object
+render.py 		list of n passages rendered to music21 score object
 	export()	to xml, midi, ly'
 
 '''
 
 # lexicon.addCategory()
 
-g.phonology.print()
-g.morphology.print()
+# g.phonology.print()
+# g.morphology.print()
 
 lexicon = Lexicon()
 lexicon.populate(g, 4)
 lexicon.print()
 
-passage = Passage(size=12)
+passage = Passage(height=5, size=23)
 
 realization = passage.spellout(lexicon)
-passage.printSyntax()
+# passage.printSyntax()
 
-for lex in realization:
-	lex.print()
+# for lex in realization:
+# 	lex.print()
+
+passage.setMeter()
+print(passage.tree)
+print(passage.bars)
+
 
 # next: go through spellout, create musical data, append to music21 score
 # then: add good lexemes, dependency of good lexeme pairs to lexicon pre-population, iteratively...
