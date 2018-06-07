@@ -39,9 +39,8 @@ class Lexicon(object):
 		return nextLabel
 
 	def print(self):
+		print('Lexicon')
 		for i, lex in enumerate(self.categories):
-			print('Lexeme', str(i))
-			print('--------')
 			lex.print()
 			print()
 
@@ -51,24 +50,22 @@ class Lexeme(object):
 	def __init__(self, cadence, anticipation=None, prolongation=None):
 		self.cadence = cadence
 
-		# projections
-		self.anticipation = anticipation
-		self.prolongation = prolongation
+		self.government = {
+			# projected features
+			'anticipation': anticipation,
+			'prolongation': prolongation,
+			# dependents
+			'antecedents': [],
+			'consequents': [],
+		}
 
-		# dependents
-		self.antecedents = []
-		self.consequents = []
-
+		self.realization = {}
 		self.label = 'unlabeled'
 
-
 	def print(self):
-		print("\n"+str(self.label))
+		print("\nlexeme "+str(self.label))
 		self.cadence.print()
-		print("anticipation:", self.anticipation)
-		print("prolongation:", self.prolongation)
-		print("antecedents:", self.antecedents)
-		print("consequents:", self.consequents)
+		pprint(self.government)
 
 	def addAntecedent(self, category):
 		self.antecedents.append(category)
@@ -79,11 +76,11 @@ class Lexeme(object):
 		return self
 
 	def addAnticipation(self, projection):
-		self.anticipations.append(projection)
+		self.government['anticipation'].append(projection)
 		return self
 
 	def addProlongation(self, projection):
-		self.prolongations.append(projection)
+		self.government['prolongation'].append(projection)
 		return self
 
 
@@ -101,14 +98,13 @@ class Lexeme(object):
 
 	def selectAnticipation(self):
 		anticipation = None
-		if len(self.anticipations>0):
-			anticipation = choice(self.anticipations)
+		if len(self.government['anticipation']>0):
+			anticipation = choice(self.government['anticipation'])
 		return anticipation
 
 	def selectProlongation(self):
 		prolongation = None
-		if len(self.prolongations>0):
-			prolongation = choice(self.prolongations)
+		if len(self.government['prolongation']>0):
+			prolongation = choice(self.government['prolongation'])
 		return prolongation
-
 

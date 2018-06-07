@@ -1,6 +1,6 @@
 from grammar import *
 
-footprintRules = [
+ligatureRules = [
 	[{
 		'span': [2],
 		'gait': ['double'],
@@ -9,7 +9,7 @@ footprintRules = [
 	}],
 	[{
 		'span': [1],
-		'gait': ['trp_ls'],
+		'gait': ['double'],
 		'foot': [[-1/2, 0, 1/2]],
 		'sync': [[0], [0], [0]],
 	}],
@@ -17,11 +17,11 @@ footprintRules = [
 		'span': [2],
 		'gait': ['double'],
 		'foot': [[-1/2, -1/4, 0, 1/2]],
-		'sync': [[0, 1/4], [0, 1/4], [0, 1/4], [0, 1/4]],
+		'sync': [[0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2]],
 	}],
 	[{
 		'span': [1],
-		'gait': ['trp_sl'],
+		'gait': ['double'],
 		'foot': [[-1/2, -1/4, 0, 1/4]],
 		'sync': [[0], [0], [0], [0]],
 	}],
@@ -33,9 +33,9 @@ footprintRules = [
 	}],
 	[{
 		'span': [2],
-		'gait': ['trp_ll'],
+		'gait': ['double'],
 		'foot': [[-1/2, -1/4, 0, 1/4]],
-		'sync': [[0, 1/4], [0, 1/4], [0, 1/4], [0, 1/4]],
+		'sync': [[0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2]],
 	}],
 ]
 
@@ -72,9 +72,9 @@ pathRules = [
 ]
 
 anticipationRules = [
-	# ['footprint'],
-	# ['footprint','tilt'],
-	# ['footprint','figure'],
+	# ['ligature'],
+	# ['ligature','tilt'],
+	# ['ligature','figure'],
 	[],
 	['tilt'],
 	['figure'],
@@ -92,8 +92,8 @@ prolongationRules = [
 
 # assemble grammar object
 phonology = Phonology()
-for rule in footprintRules:
-	phonology.addFootprintRule(rule)
+for rule in ligatureRules:
+	phonology.addligatureRule(rule)
 for rule in functionRules:
 	phonology.addFunctionRule(rule)
 for rule in pathRules:

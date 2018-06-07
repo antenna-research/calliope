@@ -13,14 +13,14 @@ class Grammar(object):
 class Phonology(object):
 	"""weighted repository of rhythmic, harmonic and gestural features"""
 
-	def __init__(self, footprints=[], functions=[], paths=[]):
-		self.footprints = footprints
+	def __init__(self, ligatures=[], functions=[], paths=[]):
+		self.ligatures = ligatures
 		self.functions = functions
 		self.paths = paths
 
 	def print(self):
 		features = {
-			'footprints': self.footprints,
+			'ligatures': self.ligatures,
 			'functions': self.functions,
 			'paths': self.paths,
 		}
@@ -28,8 +28,8 @@ class Phonology(object):
 		pprint(features)
 		print()
 
-	def addFootprintRule(self, footprintRule, weight=1):
-		self.footprints.append((footprintRule, weight))
+	def addligatureRule(self, ligatureRule, weight=1):
+		self.ligatures.append((ligatureRule, weight))
 
 	def addFunctionRule(self, functionRule, weight=1):
 		self.functions.append((functionRule, weight))
@@ -40,22 +40,22 @@ class Phonology(object):
 	def makeCadence(self): # (duration=None, harmonicFilter=None)
 		""" assemble bundle of features from phonology rules """
 		cadence = Cadence()
-		cadence.footprint = self.makeFootprint()
+		cadence.ligature = self.makeligature()
 		cadence.function = self.makeFunction()
 		cadence.path = self.makePath()
 		return cadence
 
-	def makeFootprint(self):
-		# select footprint rule
-		weights = array([rule[1] for rule in self.footprints])
+	def makeligature(self):
+		# select ligature rule
+		weights = array([rule[1] for rule in self.ligatures])
 		normalized_weights = weights.astype(float) / weights.sum()
-		footprintChoices = array(self.footprints)
-		index = choice(len(footprintChoices), p=normalized_weights)
-		footprintRule = footprintChoices[index][0]
+		ligatureChoices = array(self.ligatures)
+		index = choice(len(ligatureChoices), p=normalized_weights)
+		ligatureRule = ligatureChoices[index][0]
 
 		# select feature value from range where necessary
-		footprint = []
-		for footRule in footprintRule:
+		ligature = []
+		for footRule in ligatureRule:
 			foot = {}
 			# each foot option is composite
 			footChoices = array(footRule['foot'])
@@ -68,9 +68,9 @@ class Phonology(object):
 			foot['sync'] = []
 			for steps in footRule['sync']:
 				foot['sync'].append( choice(steps) )
-			footprint.append(foot)
+			ligature.append(foot)
 
-		return footprint
+		return ligature
 
 
 	def makeFunction(self):

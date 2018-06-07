@@ -27,24 +27,26 @@ render.py 		list of n passages rendered to music21 score object
 # g.morphology.print()
 
 lexicon = Lexicon()
-lexicon.populate(g, 4)
+lexicon.populate(g, 8)
 lexicon.print()
+print("\n-----------\n-----------\n")
 
 passage = Passage(height=5, size=23)
+passage.spellout(lexicon)
+passage.print()
 
-realization = passage.spellout(lexicon)
-# passage.printSyntax()
-
-# for lex in realization:
-# 	lex.print()
-
-passage.setMeter()
-print(passage.tree)
-print(passage.bars)
+# print(passage.bars)
+# print(passage.tree)
 print()
 
 
 # next: go through spellout, create musical data, append to music21 score
-# then: add good lexemes, dependency of good lexeme pairs to lexicon pre-population, iteratively...
+
+renderer = Renderer()
+renderer.render(passage)
+
+
+
+# then: add good lexemes, good pairwise dependencies to lexicon pre-population, iteratively...
 
 

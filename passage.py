@@ -3,10 +3,11 @@ from binarytree import *
 from utils import *
 from math import ceil, floor
 from copy import copy, deepcopy
+from pprint import pprint
 
 class Passage(object):
-	"""represents a syntactic structure (wrapper for binary tree)
-	"""
+	"""represents a syntactic structure (wrapper for binary tree)"""
+
 	def __init__(self, height=3, size=None):
 		self.tree = tree(height=height)
 		if isinstance(size, int):
@@ -19,14 +20,35 @@ class Passage(object):
 		for i, node in enumerate(self.tree.levelorder):
 			node.value = i
 			node.unify = {}
-		self.unified = []
+
+		# sequence of lexeme objects constituting passage
+		self.spelling = []
+
+		# duration of each individual foot in each ligature (including any pickup)
 		self.durations = []
+
+		# duration of the pre-barline portion of each lexeme 
 		self.anacruses = []
-		self.landings = []
+
+		# duration of the post-barline portion of each lexeme
+		self.stations = []
+
 		self.bars = []
 
 	def printSyntax(self):
 		print(self.tree)
+
+	def print(self):
+		lexemes = []
+		for lex in self.spelling:
+			lexemes.append({
+				'_label': lex.label,
+				'ligature': lex.cadence.ligature,
+				'function': lex.cadence.function,
+				'path': lex.cadence.path,
+				'realization': lex.realization,
+			})
+		pprint(lexemes)
 
 	def spellout(self, lexicon):
 		# prolonged features trickle down to leaves
@@ -36,10 +58,10 @@ class Passage(object):
 
 			if node.left:
 				node.left.unify = copy(node.unify)
-				for feat in node.lexeme.anticipation:
-					# if feat == 'footprint': <- take off first condition for 'agree' prolongation
-					if feat not in node.left.unify.keys() and feat == 'footprint':
-						node.left.unify['footprint'] = node.lexeme.cadence.footprint
+				for feat in node.lexeme.government['anticipation']:
+					# if feat == 'ligature': <- take off first condition for 'agree' prolongation
+					if feat not in node.left.unify.keys() and feat == 'ligature':
+						node.left.unify['ligature'] = node.lexeme.cadence.ligature
 					if feat not in node.left.unify.keys() and feat in node.lexeme.cadence.function:
 						node.left.unify[feat] = node.lexeme.cadence.function[feat]
 					if feat not in node.left.unify.keys() and feat in node.lexeme.cadence.path:
@@ -47,9 +69,9 @@ class Passage(object):
 
 			if node.right:
 				node.right.unify = copy(node.unify)
-				for feat in node.lexeme.prolongation:
-					if feat not in node.right.unify.keys() and feat == 'footprint':
-						node.right.unify['footprint'] = node.lexeme.cadence.footprint
+				for feat in node.lexeme.government['prolongation']:
+					if feat not in node.right.unify.keys() and feat == 'ligature':
+						node.right.unify['ligature'] = node.lexeme.cadence.ligature
 					if feat not in node.right.unify.keys() and feat in node.lexeme.cadence.function:
 						node.right.unify[feat] = node.lexeme.cadence.function[feat]
 					if feat not in node.right.unify.keys() and feat in node.lexeme.cadence.path:
@@ -60,29 +82,27 @@ class Passage(object):
 		for node in self.tree.inorder:
 			next_lexeme = deepcopy(node.lexeme)
 			for feat in node.unify.keys():
-				if feat == 'footprint':
-					next_lexeme.cadence.footprint = node.unify[feat]
+				if feat == 'ligature':
+					next_lexeme.cadence.ligature = node.unify[feat]
 				if feat in ['address', 'transposition']:
 					next_lexeme.cadence.function[feat] = node.unify[feat]
 				if feat in ['range','figure','tilt']:
 					next_lexeme.cadence.path[feat] = node.unify[feat]
 			spellout.append(next_lexeme)
-		self.unified = spellout
+		self.spelling = spellout
+		self.setMeter()
 		return spellout
 
 
 	def setMeter(self):
-		durations = self.getDurations(self.unified)
+		durations = self.getDurations(self.spelling)
 		pickupBar = max([fl(ceil(-self.anacruses[0])),2.0])
 		bars = []
-		for i in range(len(self.durations)-1):
-			bars.append(self.landings[i]-self.anacruses[i+1])
-		bars.append(self.landings[-1])
+		for i in range(len(self.stations)-1):
+			bars.append(self.stations[i]-self.anacruses[i+1])
+		bars.append(self.stations[-1])
 		# partitionedBars = self.partition(bars, self.tree)
-		# depthScores = (flatten(depth(partitionedBars,0)))
-		# depthTransitions = [abs(depthScores[i]-depthScores[i+1]) for i in range(len(depthScores)-1) ]
 
-		# print('depthScores',depthScores)
 		removedIndices = []
 		prolongedIndices = []
 		while isOversliced(bars):
@@ -96,7 +116,6 @@ class Passage(object):
 		bars.insert(0, pickupBar)
 		self.bars = bars
 		return bars
-
 
 	def desliceBars(self, bars, removedIndices, prolongedIndices):
 		# targets = [bar < 2.5 for bar in bars]
@@ -191,37 +210,20 @@ class Passage(object):
 
 		return newBars
 
-	def incrementalSetMeter(self, durations, anacruses, landings):
-		firstChunk = -anacruses[0]
-		firstBar = ceil(firstChunk)
-		bars = [firstBar]
-		load = 0
-		partitions = []
-		nextPartition = []
-		for i, duration in enumerate(durations):
-			nextChunk = landings[i]
-			if (i+1) < len(landings):
-				nextChunk -= anacruses[i+1]
-			load += nextChunk
-			nextPartition.append(duration)
-			if load >= 3:
-				bars.append(load)
-				partitions.append(nextPartition)
-				load = 0
-				nextPartition = []
-		return bars, partitions
-
-	def getDurations(self, unified):
+	def getDurations(self, realization):
 		durations = []
 		anacruses = []
-		for lexeme in unified:
+		for lexeme in realization:
 			# special extra bit before barline
 			anacrusis = 0.0
 			boundaryEvents = []
 			metricBoundaries = []
 			subdurations = []
-			for i, foot in enumerate(lexeme.cadence.footprint):
+			lexeme.realization['feet'] = []
+			for i, foot in enumerate(lexeme.cadence.ligature):
 				offsets = rhythm.getOffsets(foot)
+				lexeme.realization['feet'].append(offsets)
+
 				firstAttack = offsets[0]
 				lastAttack = offsets[-1]
 				boundaryEvents.append( (firstAttack, offsets[-1]) )
@@ -254,17 +256,11 @@ class Passage(object):
 				if i == 0:
 					anacruses.append(leadingBoundary)
 
-			durations.append(sum(subdurations))
+			durations.append(subdurations)
 
-			# print('boundaryEvents', boundaryEvents)
-			# print('metricBoundaries', metricBoundaries)
-			# print('subdurations', subdurations)
-
-		# print('durations', durations)
-		# print('anacruses', anacruses)
 		self.durations = durations
 		self.anacruses = anacruses
-		self.landings = [self.durations[i] + self.anacruses[i] for i in range(len(durations))]
+		self.stations = [sum(self.durations[i]) + self.anacruses[i] for i in range(len(durations))]
 		return durations
 
 

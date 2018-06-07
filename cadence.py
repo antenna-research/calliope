@@ -20,15 +20,15 @@ Cadence
 
 class Cadence(object):
 	"""a musical morpheme bundling rhythmic, gestural and harmonic features"""
-	def __init__(self, footprint=None, function=None, path=None):
-		self.footprint = footprint
+	def __init__(self, ligature=None, function=None, path=None):
+		self.ligature = ligature
 		self.function = function
 		self.path = path
 
 	# string represention of cadence - note list ?
 	def __str__(self):
 		features = {
-			'footprint': self.footprint,
+			'ligature': self.ligature,
 			'function': self.function,
 			'path': self.path,
 		}
@@ -37,15 +37,15 @@ class Cadence(object):
 	@property
 	def features(self):
 		features = {
-			'footprint': self.footprint,
+			'ligature': self.ligature,
 			'function': self.function,
 			'path': self.path,
 		}
 		return features
 
 	def update(featureDict):
-		if 'footprint' in featureDict:
-			self.footprint = featureDict['footprint']
+		if 'ligature' in featureDict:
+			self.ligature = featureDict['ligature']
 		if 'function' in featureDict:
 			self.function.update(featureDict['function'])
 		if 'path' in featureDict:
@@ -53,7 +53,7 @@ class Cadence(object):
 
 	def print(self):
 		features = {
-			'footprint': self.footprint,
+			'ligature': self.ligature,
 			'function': self.function,
 			'path': self.path,
 		}
@@ -63,7 +63,7 @@ class Cadence(object):
 # example
 cad = Cadence()
 
-cad.footprint = [{
+cad.ligature = [{
 	'span': 2,
 	'gait': 'double', # Gait.double or Gait['double']...
 	'foot': [-1/2, -1/4, 0, 1/2],

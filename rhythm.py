@@ -1,4 +1,5 @@
 from utils import *
+from math import ceil, floor
 
 refractions = { # 1     2      3      4      5      6      7      8       9      10      11     12      13     14      15      16      17
 	'double':	[(0,1),(1,16),(1,8), (3,16),(1,4), (5,16),(3,8), (7,16), (1,2), (9,16), (5,8), (11,16),(3,4), (13,16),(7,8),  (15,16),(1,1)],
@@ -45,11 +46,12 @@ def getOffsets(foot):
 		finalOffsets.append(finalOffset)
 	return finalOffsets
 
+
 def syncOffsets(foot):
 	""" syncopate logical offsets, desyncopate axis if crowded """
 	syncedOffsets = []
 	for i, offset in enumerate(foot['foot']):
-		j = i%(len(foot['sync'])) # sync index
+		j = i%(len(foot['sync'])) # sync index wraps around
 		if offset == 0:
 			syncBasis = 1.0
 		else:
@@ -66,6 +68,26 @@ def syncOffsets(foot):
 	for offset in afterAxis:
 		if offset <= syncedOffsets[axisIndex]:
 			syncedOffsets[axisIndex] = 0.0
+	syncedOffsets = resolveCollisions(syncedOffsets)
+	return syncedOffsets
+
+
+def resolveCollisions(syncedOffsets):
+	# for now remove one - note lexeme object will reflect incorrect number of notes
+	while len(syncedOffsets) != len(set(syncedOffsets)):
+		neighborPairs = [ (x,y) for x, y in zip(syncedOffsets[:-1], syncedOffsets[1:]) ]
+		for i, pair in enumerate(neighborPairs):
+			if pair[0] == pair[1]:
+				if pair[0] > 0:				
+					if syncedOffsets[i+1] == ceil((syncedOffsets[i+1]*2)) / 2:
+						syncedOffsets[i+1] += 0.5
+					else:
+						syncedOffsets[i+1] = fl(ceil((syncedOffsets[i+1]*2)) / 2)
+				if pair[0] < 0:
+					if syncedOffsets[i] == floor((syncedOffsets[i]*2)) / 2:
+						syncedOffsets[i] -= 0.5
+					else:
+						syncedOffsets[i] = fl(floor((syncedOffsets[i]*2)) / 2)
 	return syncedOffsets
 
 
@@ -83,5 +105,5 @@ def getFinalOffset(offset, refraction, scale):
 	return fl((final[0]*scale)/(final[1]), 6)
 
 
-
 # [0.0, 0.5, 0.25, 0.125, 0.0625, 0.03125, 0.015625]
+
