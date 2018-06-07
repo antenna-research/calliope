@@ -20,7 +20,7 @@ def flatten(pool):
 		if isinstance(v, list):
 		  res += flatten(v)
 		else:
-			if isinstance(v, int) or isinstance(v, str):
+			if isinstance(v, int) or isinstance(v, str) or isinstance(v, float):
 				res.append(v)
 	return res
 

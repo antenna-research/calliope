@@ -61,22 +61,27 @@ functionRules = [
 pathRules = [
 	{
 	'range': [2,3,4],
-	'figure': ['rampUp', 'rampDown'],
-	'tilt': ['float', 'dive'],
+	'figure': ['zigZagUp', 'zigZagDown'],
+	'direction': [-1, 0, 1],
 	},
 	{
 	'range': [5,6,7],
-	'figure': ['stepUp', 'stepDown'],
-	'tilt': ['rise', 'fall'],
+	'figure': ['rampUp'],
+	'direction': [-4,-5,-6],
+	},
+	{
+	'range': [5,6,7],
+	'figure': ['rampDown'],
+	'direction': [4,5,6],
 	},
 ]
 
 anticipationRules = [
 	# ['ligature'],
-	# ['ligature','tilt'],
+	# ['ligature','direction'],
 	# ['ligature','figure'],
 	[],
-	['tilt'],
+	['direction'],
 	['figure'],
 ]
 

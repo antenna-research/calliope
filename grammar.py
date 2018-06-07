@@ -103,7 +103,7 @@ class Phonology(object):
 		path = {}
 		path['range'] = choice(pathRule['range'])
 		path['figure'] = choice(pathRule['figure'])
-		path['tilt'] = choice(pathRule['tilt'])
+		path['direction'] = choice(pathRule['direction'])
 
 		return path
 

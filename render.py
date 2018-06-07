@@ -22,12 +22,6 @@ class Renderer(object):
 		for pair in incrementPairs:
 			increments.extend(pair)
 
-		# print('increments =', increments)
-		# print("\nincrementPairs =", incrementPairs)
-		# print('passage.bars', passage.bars)
-		# print('passage.durations', passage.durations)
-		# print('passage.stations', passage.stations)
-
 		# split each lexeme in anacrusis and station, put them in a flat list
 		splitLexemes = []
 		for i, lexeme in enumerate(passage.spelling):
@@ -45,6 +39,8 @@ class Renderer(object):
 				'_duration': incrementPairs[i][1],
 				'parent': lexeme,
 			}
+			pickup['_pitches'] = lexeme.realization['outline'][:len(pickup['_offsets'])]
+			station['_pitches'] = lexeme.realization['outline'][len(pickup['_offsets']):]
 			# for ligatures with multiple feet, add remaining feet, with internal offset
 			if len(lexeme.realization['feet']) > 1:
 				for index in range(1, len(lexeme.realization['feet'])):
@@ -94,9 +90,9 @@ class Renderer(object):
 					for k, duration in enumerate(durations):
 						n = m21.note.Note()
 						n.quarterLength = duration
-						n.pitch = m21.pitch.Pitch('C4')
+						n.pitch = m21.pitch.Pitch()
+						n.pitch.ps = 72.0 + increment['_pitches'][k]
 						noteOffset = internalOffset+increment['_offsets'][k]
-						print(i,j,k, noteOffset)
 						# measure.append(n)
 						measure.insert(noteOffset, n)
 				# if duration is positive, is station
@@ -109,14 +105,13 @@ class Renderer(object):
 					for k, duration in enumerate(durations):
 						n = m21.note.Note()
 						n.quarterLength = duration
-						n.pitch = m21.pitch.Pitch('C4')
+						n.pitch = m21.pitch.Pitch()
+						n.pitch.ps = 72.0 + increment['_pitches'][k]
 						noteOffset = internalOffset+increment['_offsets'][k]
-						print(str(i)+"  "+str(j)+"  "+str(k)+"   "+str(noteOffset))
 						# measure.append(n)
 						measure.insert(noteOffset, n)
 					internalOffset += abs(increment['_duration'])
 			if i == 0:
-				# doesn't work in MuseScore at least...
 				measure.padAsAnacrusis()
 			measure.makeRests(fillGaps=False, timeRangeFromBarDuration=True)
 		measures.show()

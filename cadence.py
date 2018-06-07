@@ -88,7 +88,7 @@ cad.function = {
 cad.path = {
 	'range': 2,
 	'figure': 'rampUp',
-	'tilt': 'float',
+	'direction': 'float',
 }
 
 cad.print()  # = pprint(cad.features)

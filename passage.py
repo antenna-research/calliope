@@ -1,9 +1,11 @@
-import rhythm
 from binarytree import *
 from utils import *
 from math import ceil, floor
 from copy import copy, deepcopy
 from pprint import pprint
+import rhythm
+import path
+import harmony
 
 class Passage(object):
 	"""represents a syntactic structure (wrapper for binary tree)"""
@@ -80,19 +82,33 @@ class Passage(object):
 		spellout = []
 		# now read out nodes into list, with prolonged features replacing lexical features
 		for node in self.tree.inorder:
-			next_lexeme = deepcopy(node.lexeme)
+			next_lexeme = node.lexeme # deepcopy(node.lexeme)
 			for feat in node.unify.keys():
 				if feat == 'ligature':
 					next_lexeme.cadence.ligature = node.unify[feat]
 				if feat in ['address', 'transposition']:
 					next_lexeme.cadence.function[feat] = node.unify[feat]
-				if feat in ['range','figure','tilt']:
+				if feat in ['range','figure','direction']:
 					next_lexeme.cadence.path[feat] = node.unify[feat]
 			spellout.append(next_lexeme)
 		self.spelling = spellout
 		self.setMeter()
+		self.setFigure()
+		# self.setHarmony()
 		return spellout
 
+	def setFigure(self):
+		print("\nsetFigure\n---------")
+		for i, node in enumerate(self.tree.levelorder):
+			if i == 0:
+				node.lexeme.realization['height'] = 0
+			if node.left:
+				leadingDirection = node.left.lexeme.cadence.path['direction']
+				node.left.lexeme.realization['height'] = node.lexeme.realization['height'] - leadingDirection
+			if node.right:
+				trailingDirection = node.right.lexeme.cadence.path['direction']
+				node.right.lexeme.realization['height'] = node.lexeme.realization['height'] + trailingDirection
+			node.lexeme.realization['outline'] = path.makeOutline(node.lexeme.cadence.path, node.lexeme.realization)
 
 	def setMeter(self):
 		durations = self.getDurations(self.spelling)
@@ -165,10 +181,6 @@ class Passage(object):
 
 		return bars, removedIndices, prolongedIndices
 
-	def consolidate(self, bars):
-		# [[[3.0, [2.5, 2.5, [5.0, 4.5]]], [2.5, [5.0, 7.0], [7.0, 4.5]]], [3.0, [5.0, [4.5, 5.0, 7.0, 5.0]], [5.0, [[4.5, 5.0], [7.0, 7.0, 4.5]], 2.0]]]
-		for component in bars:
-			pass
 
 	def partition(self, bars, syntaxTree):
 
@@ -210,10 +222,11 @@ class Passage(object):
 
 		return newBars
 
-	def getDurations(self, realization):
+
+	def getDurations(self, spelling):
 		durations = []
 		anacruses = []
-		for lexeme in realization:
+		for lexeme in spelling:
 			# special extra bit before barline
 			anacrusis = 0.0
 			boundaryEvents = []
