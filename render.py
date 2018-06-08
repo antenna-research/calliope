@@ -116,7 +116,6 @@ class Renderer(object):
 			measure.makeRests(fillGaps=False, timeRangeFromBarDuration=True)
 		measures.show()
 
-
 timeSignatures = {
 	1.5: m21.meter.TimeSignature('3/8'),
 	2.0: m21.meter.TimeSignature('2/4'),

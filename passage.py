@@ -94,11 +94,15 @@ class Passage(object):
 		self.spelling = spellout
 		self.setMeter()
 		self.setFigure()
-		# self.setHarmony()
+		self.setHarmony()
 		return spellout
 
+	def setHarmony(self):
+		print("\nsetHarmony\n----------")
+		for i, node in enumerate(self.tree.levelorder):
+			node.lexeme.realization['lens'] = harmony.makeLens(node.lexeme.cadence.function, node.lexeme.cadence.ligature)
+
 	def setFigure(self):
-		print("\nsetFigure\n---------")
 		for i, node in enumerate(self.tree.levelorder):
 			if i == 0:
 				node.lexeme.realization['height'] = 0

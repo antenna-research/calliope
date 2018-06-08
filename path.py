@@ -32,7 +32,6 @@ figures = {
 
 def makeOutline(pathFeatures, realizationFeatures):
 	outline = []
-	print("realizationFeatures['feet']", flatten(realizationFeatures['feet']))
 	cardinality = len(flatten(realizationFeatures['feet']))
 	for i in range(cardinality):
 		positionRatio = i / cardinality
