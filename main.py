@@ -28,25 +28,24 @@ render.py 		list of n passages rendered to music21 score object
 
 lexicon = Lexicon()
 lexicon.populate(g, 8)
+
 lexicon.print()
 print("\n-----------\n-----------\n")
 
 passage = Passage(height=5, size=23)
+
 passage.spellout(lexicon)
 passage.print()
-
 # print(passage.bars)
 # print(passage.tree)
 print()
-
-
-# next: go through spellout, create musical data, append to music21 score
 
 renderer = Renderer()
 renderer.render(passage)
 
 
-
-# then: add good lexemes, good pairwise dependencies to lexicon pre-population, iteratively...
+# todo: working with multiple voices at once
+# todo: convincing m21 to break durations into tied notes over the tactus
+# todo: add discovered lexemes, pairwise dependencies to lexicon pre-population, iteratively...
 
 

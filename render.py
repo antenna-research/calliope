@@ -41,6 +41,8 @@ class Renderer(object):
 			}
 			pickup['_pitches'] = lexeme.realization['outline'][:len(pickup['_offsets'])]
 			station['_pitches'] = lexeme.realization['outline'][len(pickup['_offsets']):]
+			pickup['_lens'] = lexeme.realization['lens'][:len(pickup['_offsets'])]
+			station['_lens'] = lexeme.realization['lens'][len(pickup['_offsets']):]
 			# for ligatures with multiple feet, add remaining feet, with internal offset
 			if len(lexeme.realization['feet']) > 1:
 				for index in range(1, len(lexeme.realization['feet'])):
@@ -91,7 +93,7 @@ class Renderer(object):
 						n = m21.note.Note()
 						n.quarterLength = duration
 						n.pitch = m21.pitch.Pitch()
-						n.pitch.ps = 72.0 + increment['_pitches'][k]
+						n.pitch.ps = 72.0 + increment['_pitches'][k] + increment['_lens'][k]
 						noteOffset = internalOffset+increment['_offsets'][k]
 						# measure.append(n)
 						measure.insert(noteOffset, n)
@@ -106,7 +108,7 @@ class Renderer(object):
 						n = m21.note.Note()
 						n.quarterLength = duration
 						n.pitch = m21.pitch.Pitch()
-						n.pitch.ps = 72.0 + increment['_pitches'][k]
+						n.pitch.ps = 72.0 + increment['_pitches'][k] + increment['_lens'][k]
 						noteOffset = internalOffset+increment['_offsets'][k]
 						# measure.append(n)
 						measure.insert(noteOffset, n)

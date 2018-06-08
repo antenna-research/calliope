@@ -101,6 +101,8 @@ class Passage(object):
 		print("\nsetHarmony\n----------")
 		for i, node in enumerate(self.tree.levelorder):
 			node.lexeme.realization['lens'] = harmony.makeLens(node.lexeme.cadence.function, node.lexeme.cadence.ligature)
+			print('lens', node.lexeme.realization['lens'])
+
 
 	def setFigure(self):
 		for i, node in enumerate(self.tree.levelorder):

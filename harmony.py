@@ -57,36 +57,85 @@ bisections = {
 	      'D1': ('C2','A1'), 'B1': ('E2','D2'), 'C2': ('C1','E1'), 'E2': ('A1','D1')}
 }
 
-
 def makeLens(harmonyFeatures, ligature):
 	lens = []
-	logicalFeet = []
-	for foot in ligature:
-		logicalFeet.append(foot['foot'])
-	print('logicalFeet', logicalFeet)
-	# each foot gets a piece
-	# calculate how many pieces to cover number of feet
-	# 	derive magnitude at which to iterate over locus, apportion to feet
-	# calculate how much further to magnify so that there are enough notes for each foot
-	# for each foot
-'''
-      ex. one foot divided by eight:
-	  anacrusis                                    station
-	                      -1/2     -1/4 -1/8       0   1/8  1/4        1/2
-	[[[-1, 0],[0, -1]],  [[0, -1], [-1, -1]]],  [[[0, -1],[-1, -1]],[[-1, -1], [-1, 1]]]
-'''
+	logicalFeet = [foot['foot'] for foot in ligature]
 
+	numberOfSubloci = len(logicalFeet)
+	footMagnificationfactor = 0
+	while numberOfSubloci > 2**footMagnificationfactor:
+		footMagnificationfactor += 1
 
-	locus = expand(harmonyFeatures['address'], 5)
-	print('locus',locus)
+	footAddresses = expand(harmonyFeatures['address'], footMagnificationfactor, False)
+	if footMagnificationfactor == 0:
+		footAddresses = [footAddresses]
+
+	for i, foot in enumerate(logicalFeet):
+		address = footAddresses[i]
+		for note in foot:
+			if note == 0:
+				lens.append( expand(address, 1) )
+			if note == 1/2:
+				lens.append( flatten(expand(address, 3))[3] )
+			if note == -1/2:
+				lens.append( flatten(expand(address, 3))[1] )
+			if note == 1/4:
+				lens.append( flatten(expand(address, 4))[5] )
+			if note == -1/4:
+				lens.append( flatten(expand(address, 4))[3] )
+			if note == 1/8:
+				lens.append( flatten(expand(address, 5))[9] )
+			if note == -1/8:
+				lens.append( flatten(expand(address, 5))[7] )
+			if note == 1/16:
+				lens.append( flatten(expand(address, 6))[17] )
+			if note == -1/16:
+				lens.append( flatten(expand(address, 6))[15] )
+			if note == 1/32:
+				lens.append( flatten(expand(address, 7))[33] )
+			if note == -1/32:
+				lens.append( flatten(expand(address, 7))[31] )
 	return lens
 
-def expand(address, magnification):
+def expand(address, magnification, getValues=True):
 	magnification = magnification-1
-	pattern = 'A'
-	# if magnification%2 == 0: pattern = 'A'
-	# if magnification%2 == 1: pattern = 'B'
+	if magnification%2 == 0: pattern = 'A'
+	if magnification%2 == 1: pattern = 'B'
 	if magnification > 0:
-		return [expand( bisections[pattern][address][0], magnification ), expand( bisections[pattern][address][1], magnification )]
+		return [expand( bisections[pattern][address][0], magnification, getValues ), expand( bisections[pattern][address][1], magnification, getValues )]
 	else:
-		return loc[address]
+		if getValues:
+			return loc[address]
+		else:
+			return address
+
+'''
+		each foot gets a piece
+		calculate how many pieces to cover number of feet
+			if number of feet is less than 2**x, maybe give feet with longer duration a double portion
+			derive magnitude(s) at which to iterate over locus, apportion to feet
+		calculate how much further to magnify so that there are enough notes for each foot
+
+			ex. one foot divided by eight:
+			anacrusis                                    station
+			                      -1/2     -1/4 -1/8       0   1/8  1/4        1/2
+			[[[-1, 0],[0, -1]],  [[0, -1], [-1, -1]]],  [[[0, -1],[-1, -1]],[[-1, -1], [-1, 1]]]
+
+
+			or better yet:
+			                      -1/2     -1/4 -1/8       0   1/8  1/4        1/2
+														   1
+            [  -1,                                        -1                     ]
+            [[  1,                  0],                   [1,                 -1]]
+            [[[-1,     -1],        [0,        1]],      [[-1,       1],       [1,       1]]] 
+			[[[[1, 0], [1, -1]],  [[0, 1], [-1, 0]]],   [[[1, -1], [-1, -1]], [[-1, 0], [-1, 1]]]]
+			
+			 0 = exp(0) = flatten(exp(2))[2]
+
+			-1/2 = exp(flatten(exp(2))[1])
+			 1/2 = exp(flatten(exp(2))[3])
+			-1/4 = exp(flatten(exp(3))[3])
+			 1/4 = exp(flatten(exp(3))[5])
+			-1/8 = exp(flatten(exp(2))[7])
+			 1/8 = exp(flatten(exp(2))[9])
+	'''
