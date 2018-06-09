@@ -95,6 +95,9 @@ def makeLens(harmonyFeatures, ligature):
 				lens.append( flatten(expand(address, 7))[33] )
 			if note == -1/32:
 				lens.append( flatten(expand(address, 7))[31] )
+	for shift in lens:
+		shift = (shift+harmonyFeatures['transposition'])
+		if abs(shift) == 2: shift = int(shift * -1/2)
 	return lens
 
 def expand(address, magnification, getValues=True):

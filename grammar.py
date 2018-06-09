@@ -10,8 +10,37 @@ class Grammar(object):
 		self.syntax = syntax
 
 
+
+class Morphology(object):
+
+	def __init__(self):
+		self.anticipationRules = []
+		self.prolongationRules = []
+
+	def addAnticipationRule(self, projectedFeatures):
+		self.anticipationRules.append(projectedFeatures)
+
+	def addProlongationRule(self, projectedFeatures):
+		self.prolongationRules.append(projectedFeatures)
+
+	def selectAnticipation(self):
+		return choice(self.anticipationRules)
+
+	def selectProlongation(self):
+		return choice(self.prolongationRules)
+
+	def print(self):
+		features = {
+			'anticipations': self.anticipationRules,
+			'prolongations': self.prolongationRules,
+		}
+		print("\nMorphology")
+		pprint(features)
+		print()
+
+
 class Phonology(object):
-	"""weighted repository of rhythmic, harmonic and gestural features"""
+	"""weighted repository of rhythmic, harmonic and gestural features, and feature dependencies"""
 
 	def __init__(self, ligatures=[], functions=[], paths=[]):
 		self.ligatures = ligatures
@@ -106,33 +135,5 @@ class Phonology(object):
 		path['direction'] = choice(pathRule['direction'])
 
 		return path
-
-
-class Morphology(object):
-
-	def __init__(self):
-		self.anticipationRules = []
-		self.prolongationRules = []
-
-	def addAnticipationRule(self, projectedFeatures):
-		self.anticipationRules.append(projectedFeatures)
-
-	def addProlongationRule(self, projectedFeatures):
-		self.prolongationRules.append(projectedFeatures)
-
-	def selectAnticipation(self):
-		return choice(self.anticipationRules)
-
-	def selectProlongation(self):
-		return choice(self.prolongationRules)
-
-	def print(self):
-		features = {
-			'anticipations': self.anticipationRules,
-			'prolongations': self.prolongationRules,
-		}
-		print("\nMorphology")
-		pprint(features)
-		print()
 
 

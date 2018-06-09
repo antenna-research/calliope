@@ -115,8 +115,10 @@ class Renderer(object):
 					internalOffset += abs(increment['_duration'])
 			if i == 0:
 				measure.padAsAnacrusis()
-			measure.makeRests(fillGaps=False, timeRangeFromBarDuration=True)
+			measure.makeRests(fillGaps=True, timeRangeFromBarDuration=True)
+			measure.timeSignature = measure.bestTimeSignature()
 		measures.show()
+		# measures.show('lily')
 
 timeSignatures = {
 	1.5: m21.meter.TimeSignature('3/8'),

@@ -80,9 +80,16 @@ class Passage(object):
 						node.right.unify[feat] = node.lexeme.cadence.path[feat]
 
 		spellout = []
-		# now read out nodes into list, with prolonged features replacing lexical features
+		# read out nodes into list
 		for node in self.tree.inorder:
 			next_lexeme = node.lexeme # deepcopy(node.lexeme)
+			# prolonged features replace lexical features, unless lexeme projects that feature itself
+			reprojectedFeatures = []
+			for feat in node.unify.keys():
+				if feat in next_lexeme.government['prolongation'] or next_lexeme.government['anticipation']:
+					reprojectedFeatures.append(feat)
+			for feat in reprojectedFeatures:
+				del node.unify[feat]
 			for feat in node.unify.keys():
 				if feat == 'ligature':
 					next_lexeme.cadence.ligature = node.unify[feat]
@@ -98,11 +105,8 @@ class Passage(object):
 		return spellout
 
 	def setHarmony(self):
-		print("\nsetHarmony\n----------")
 		for i, node in enumerate(self.tree.levelorder):
 			node.lexeme.realization['lens'] = harmony.makeLens(node.lexeme.cadence.function, node.lexeme.cadence.ligature)
-			print('lens', node.lexeme.realization['lens'])
-
 
 	def setFigure(self):
 		for i, node in enumerate(self.tree.levelorder):
@@ -165,9 +169,9 @@ class Passage(object):
 			elif i == len(bars)-1 or next > len(bars)-1:
 				right = False
 			else:
-				if bars[i]+bars[next] < 5.5 and bars[i]+bars[prev] > 5.5:
+				if bars[i]+bars[next] <= 5.0 and bars[i]+bars[prev] > 5.0:
 					right = True
-				elif bars[i]+bars[next] > 5.5 and bars[i]+bars[prev] < 5.5:
+				elif bars[i]+bars[next] > 5.0 and bars[i]+bars[prev] <= 5.0:
 					right = False
 				else:
 					if (scores[i] > scores[prev]) and (next not in prolongedIndices):
