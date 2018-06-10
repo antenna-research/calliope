@@ -148,7 +148,7 @@ class Passage(object):
 		# i = targets.index(True)
 		targets = []
 		for b, bar in enumerate(bars):
-			if bar > 0 and bar < 2.5:
+			if bar > 0 and bar < 2.0:
 				targets.append(self.tree.inorder[b].size)
 			else:
 				targets.append(0)
@@ -162,16 +162,24 @@ class Passage(object):
 			next += 1
 
 		scores = [node.size for node in self.tree.inorder]
-		if bars[i] < 2.5:
+		if bars[i] < 2.0:
 			right = False
 			if i == 0 or prev < 0:
 				right = True
 			elif i == len(bars)-1 or next > len(bars)-1:
 				right = False
 			else:
+				if bars[i]+bars[next] <= 4.0 and bars[i]+bars[prev] > 4.0:
+					right = True
+				elif bars[i]+bars[next] > 4.0 and bars[i]+bars[prev] <= 4.0:
+					right = False
 				if bars[i]+bars[next] <= 5.0 and bars[i]+bars[prev] > 5.0:
 					right = True
 				elif bars[i]+bars[next] > 5.0 and bars[i]+bars[prev] <= 5.0:
+					right = False
+				if bars[i]+bars[next] <= 6.0 and bars[i]+bars[prev] > 6.0:
+					right = True
+				elif bars[i]+bars[next] > 6.0 and bars[i]+bars[prev] <= 6.0:
 					right = False
 				else:
 					if (scores[i] > scores[prev]) and (next not in prolongedIndices):
@@ -253,20 +261,20 @@ class Passage(object):
 
 				leadingBoundary = 0
 				if firstAttack < 0:
-					leadingBoundary = floor((firstAttack*2)) / 2
+					leadingBoundary = floor((firstAttack*4)) / 4
 					# leadingBoundary = floor(firstAttack) # use this version for whole-beat measures (1 of 3)
 
 				trailingBoundary = 0
 				if lastAttack > 0:
-					trailingBoundary = ceil((lastAttack*2)) / 2
+					trailingBoundary = ceil((lastAttack*4)) / 4
 					# trailingBoundary = ceil(lastAttack) # use this version for whole-beat measures (2 of 3)
 
 				# give last note some time to sustain
 				if lastAttack - floor(lastAttack) == 0:
-					trailingBoundary += 1
+					trailingBoundary += 0.25
 				 # comment below out in case of whole-beat measures (3 of 3)
-				if lastAttack - floor(lastAttack) == 0.5:
-					trailingBoundary += 0.5
+				if lastAttack - floor(lastAttack) == 0.25:
+					trailingBoundary += 0.25
 
 				# pad out to minimum duration
 				if trailingBoundary < foot['span']:
@@ -286,27 +294,33 @@ class Passage(object):
 		self.stations = [sum(self.durations[i]) + self.anacruses[i] for i in range(len(durations))]
 		return durations
 
+	def fitToInstrument(self, instrument):
+		floor, ceiling = (instrument.lowestNote.ps, instrument.highestNote.ps)
+		self.fitConstituent(self.tree, floor, ceiling)
 
-'''
-
->>> print(root)
-
-    __1
-   /   \
-  2     3
- / \
-4   5
-
->>> root.inorder - linear order of lexemes
-[Node(4), Node(2), Node(5), Node(1), Node(3)]
-
->>> root.levelorder
-[Node(1), Node(2), Node(3), Node(4), Node(5)]
-
->>> root.preorder
-[Node(1), Node(2), Node(4), Node(5), Node(3)]
-
->>> root.postorder
-[Node(4), Node(5), Node(2), Node(3), Node(1)]
-
-'''
+	def fitConstituent(self, constituent, floor, ceiling):
+		pitches = []
+		for node in constituent.inorder:
+			for i, target in enumerate(node.lexeme.realization['outline']):
+				pitches.append(target + node.lexeme.realization['lens'][i])
+		pitchReference = deepcopy(pitches)
+		shift = 0
+		print(pitchReference)
+		while min(pitchReference) > floor+12:
+			pitchReference = [pitch-12 for pitch in pitchReference]
+			print(pitchReference)
+			shift -= 12
+		while min(pitchReference) < floor:
+			pitchReference = [pitch+12 for pitch in pitchReference]
+			print(pitchReference)
+			shift += 12
+		if max(pitchReference) > ceiling and constituent.left and constituent.right: # and constituent.left.min_leaf_depth>1 and constituent.right.min_leaf_depth>1:
+			self.fitConstituent(constituent.left, floor, ceiling)
+			self.fitConstituent(constituent.right, floor, ceiling)
+		else:
+			print(constituent)
+			print(min(pitchReference), floor, max(pitchReference), ceiling)
+			print(constituent.left)
+			print(constituent.right)
+			for node in constituent.inorder:
+				node.lexeme.realization['shift'] = shift

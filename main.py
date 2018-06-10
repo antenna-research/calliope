@@ -27,12 +27,12 @@ render.py 		list of n passages rendered to music21 score object
 # g.morphology.print()
 
 lexicon = Lexicon()
-lexicon.populate(g, 13)
+lexicon.populate(g, 5)
 
 lexicon.print()
 print("\n-----------\n-----------\n")
 
-passage = Passage(height=6)
+passage = Passage(height=5)
 
 passage.spellout(lexicon)
 passage.print()
@@ -41,18 +41,22 @@ print(passage.tree)
 print()
 
 renderer = Renderer()
-renderer.render(passage)
+renderer.render(passage, 'viola')
 
 
 # todo
 # working with multiple voices at once
+# 	a: make rule groups in spec sheet
+# 	b: work out feature track spellout
+# 		wrap solution; stretch solution
+#   c: leave space; strecht solution
 # label events on score
-# record phonology/agreement, spellout to log, label it and score with unix time
+# record phonology/agreement, spellout to log, label it and score with timestamp
 # rests after constituents, corresponding to depth
-# lexemes with opacity to certain features - or: local agreement...
 # pruning algorithm for shorter sentences over taller trees - remove random/weighted leaves from larger tree
-# fit to instrument range - octave break optimization (score *constituent* boundaries using 2017 codebase metric?)
-# convince m21 to break durations into tied notes on the beat
 # add discovered lexemes, pairwise dependencies to lexicon pre-population, iteratively
 # spec bundles which can be selected and unified (merge-mask) until a full lexeme is obtained (allowing all feature correlations)
+# convince m21 to break durations into tied notes on the beat
+# other types of agreement / non-agreement / feature-checking
+# pitch plug-in / new transposition logic: exact transposition/register of lexeme given; transposition of lens depends thereon
 

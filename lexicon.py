@@ -1,5 +1,6 @@
 from grammar import *
 from numpy.random import choice, seed
+from copy import deepcopy
 
 class Lexicon(object):
 
@@ -30,7 +31,7 @@ class Lexicon(object):
 			lexeme = choice(self.categories)
 		else:
 			lexeme = self.categories[index]
-		return lexeme
+		return deepcopy(lexeme)
 
 	def nextLabel(self):
 		nextLabel = 0
