@@ -160,8 +160,8 @@ class Renderer(object):
 		word_site = "http://svnweb.freebsd.org/csrg/share/dict/words?view=co&content-type=text/plain"
 		response = requests.get(word_site)
 		words = response.content.splitlines()
-		word = choice(words).capitalize()
-		title = word.decode("utf-8")+" · "+str(timestamp)
+		word = choice(words).decode("utf-8").capitalize()
+		title = word+" · "+str(timestamp)
 		return (title, date)
 
 timeSignatures = {

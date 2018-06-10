@@ -50,11 +50,10 @@ renderer.render(passage, 'viola')
 # 	b: work out feature track spellout
 # 		wrap solution; stretch solution
 #   c: leave space; strecht solution
-# label events on score
 # record phonology/agreement, spellout to log, label it and score with timestamp
 # rests after constituents, corresponding to depth
-# pruning algorithm for shorter sentences over taller trees - remove random/weighted leaves from larger tree
 # add discovered lexemes, pairwise dependencies to lexicon pre-population, iteratively
+# pruning algorithm for shorter sentences over taller trees - remove random/weighted leaves from larger tree
 # spec bundles which can be selected and unified (merge-mask) until a full lexeme is obtained (allowing all feature correlations)
 # convince m21 to break durations into tied notes on the beat
 # other types of agreement / non-agreement / feature-checking
