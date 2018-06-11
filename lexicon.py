@@ -4,8 +4,21 @@ from copy import deepcopy
 
 class Lexicon(object):
 
-	def __init__(self):
+	def __init__(self, minimumMetricUnit=0.5):
 		self.categories = []
+		self.minimumMetricUnit = minimumMetricUnit
+
+	def __str__(self):
+		lexicon = []
+		for i, lex in enumerate(self.categories):
+			lexicon.append(str(lex))
+		return "\n".join(lexicon)
+
+	def print(self):
+		print('Lexicon')
+		for i, lex in enumerate(self.categories):
+			lex.print()
+			print()
 
 	def populate(self, grammar, number_categories=0):
 		for x in range(number_categories):
@@ -39,12 +52,6 @@ class Lexicon(object):
 			nextLabel = self.categories[-1].label + 1
 		return nextLabel
 
-	def print(self):
-		print('Lexicon')
-		for i, lex in enumerate(self.categories):
-			lex.print()
-			print()
-
 
 class Lexeme(object):
 	"""the specification of an dependant and its agreement"""
@@ -62,6 +69,15 @@ class Lexeme(object):
 
 		self.realization = {}
 		self.label = 'unlabeled'
+
+	def __str__(self):
+		rep = str(self.label) + "\t" + str(self.cadence.ligature)+"\n"
+		rep += "\t" + str(self.cadence.function)+"\n"
+		rep += "\t" + str(self.cadence.path)+"\n"
+		if len(self.realization) > 0:
+			rep += "\t" + str(self.realization)+"\n"
+		return rep
+
 
 	def print(self):
 		print("\nlexeme "+str(self.label))

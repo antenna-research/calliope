@@ -9,8 +9,6 @@ class Grammar(object):
 		self.morphology = morphology
 		self.syntax = syntax
 
-
-
 class Morphology(object):
 
 	def __init__(self):
@@ -37,7 +35,6 @@ class Morphology(object):
 		print("\nMorphology")
 		pprint(features)
 		print()
-
 
 class Phonology(object):
 	"""weighted repository of rhythmic, harmonic and gestural features, and feature dependencies"""

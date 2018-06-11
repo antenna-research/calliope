@@ -25,7 +25,7 @@ class Cadence(object):
 		self.function = function
 		self.path = path
 
-	# string represention of cadence - note list ?
+	# string represention of cadence
 	def __str__(self):
 		features = {
 			'ligature': self.ligature,

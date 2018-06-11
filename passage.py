@@ -37,6 +37,12 @@ class Passage(object):
 
 		self.bars = []
 
+	def __str__(self):
+		passage = []
+		for i, lex in enumerate(self.spelling):
+			passage.append(str(i)+": "+str(lex)),
+		return "\n".join(passage)
+
 	def printSyntax(self):
 		print(self.tree)
 
@@ -53,6 +59,7 @@ class Passage(object):
 		pprint(lexemes)
 
 	def spellout(self, lexicon):
+		self.lexicon=lexicon
 		# prolonged features trickle down to leaves
 		for node in self.tree.levelorder:
 			node.lexeme = lexicon.selectLexeme()
@@ -99,7 +106,7 @@ class Passage(object):
 					next_lexeme.cadence.path[feat] = node.unify[feat]
 			spellout.append(next_lexeme)
 		self.spelling = spellout
-		self.setMeter()
+		self.setMeter(lexicon.minimumMetricUnit)
 		self.setFigure()
 		self.setHarmony()
 		return spellout
@@ -120,8 +127,8 @@ class Passage(object):
 				node.right.lexeme.realization['height'] = node.lexeme.realization['height'] + trailingDirection
 			node.lexeme.realization['outline'] = path.makeOutline(node.lexeme.cadence.path, node.lexeme.realization)
 
-	def setMeter(self):
-		durations = self.getDurations(self.spelling)
+	def setMeter(self, minimumMetricUnit):
+		durations = self.getDurations(self.spelling, minimumMetricUnit)
 		pickupBar = max([fl(ceil(-self.anacruses[0])),2.0])
 		bars = []
 		for i in range(len(self.stations)-1):
@@ -241,9 +248,10 @@ class Passage(object):
 		return newBars
 
 
-	def getDurations(self, spelling):
+	def getDurations(self, spelling, minimumMetricUnit=0.5):
 		durations = []
 		anacruses = []
+		denominator = 1/minimumMetricUnit
 		for lexeme in spelling:
 			# special extra bit before barline
 			anacrusis = 0.0
@@ -261,20 +269,15 @@ class Passage(object):
 
 				leadingBoundary = 0
 				if firstAttack < 0:
-					leadingBoundary = floor((firstAttack*4)) / 4
-					# leadingBoundary = floor(firstAttack) # use this version for whole-beat measures (1 of 3)
+					leadingBoundary = floor((firstAttack*denominator)) / denominator
 
 				trailingBoundary = 0
 				if lastAttack > 0:
-					trailingBoundary = ceil((lastAttack*4)) / 4
-					# trailingBoundary = ceil(lastAttack) # use this version for whole-beat measures (2 of 3)
+					trailingBoundary = ceil((lastAttack*denominator)) / denominator
 
 				# give last note some time to sustain
 				if lastAttack - floor(lastAttack) == 0:
-					trailingBoundary += 0.25
-				 # comment below out in case of whole-beat measures (3 of 3)
-				if lastAttack - floor(lastAttack) == 0.25:
-					trailingBoundary += 0.25
+					trailingBoundary += minimumMetricUnit
 
 				# pad out to minimum duration
 				if trailingBoundary < foot['span']:

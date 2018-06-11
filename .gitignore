@@ -2,4 +2,6 @@
 __pycache__/
 _notes/*
 _stuff/*
+_output/*
+_log/*
 *.png

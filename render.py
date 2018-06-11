@@ -133,10 +133,16 @@ class Renderer(object):
 			measure.makeRests(fillGaps=True, timeRangeFromBarDuration=True)
 			measure.timeSignature = measure.bestTimeSignature()
 
+
 		heading = self.makeHeading()
+
+		# write log file
+		self.writeLog(passage, heading)
+
+		# render score
 		part.insert(0, m21.metadata.Metadata())
-		part.metadata.title = heading[0]
-		part.metadata.composer = heading[1]
+		part.metadata.title = heading[1]
+		part.metadata.composer = heading[0]
 		part.show()
 		# measures.show('lily')
 
@@ -160,9 +166,18 @@ class Renderer(object):
 		word_site = "http://svnweb.freebsd.org/csrg/share/dict/words?view=co&content-type=text/plain"
 		response = requests.get(word_site)
 		words = response.content.splitlines()
-		word = choice(words).decode("utf-8").capitalize()
-		title = word+" · "+str(timestamp)
-		return (title, date)
+		title = choice(words).decode("utf-8").capitalize()
+		return (timestamp, title, date)
+
+	def writeLog(self,passage,heading):
+		""" write log file """
+		f = open("/Users/home/Documents/top/shelf/composition/framework/_log/"+heading[0]+"-"+heading[1]+".txt", 'w')
+		f.write(str(passage.lexicon))
+		f.write("\n\n")
+		f.write(str(passage.tree))
+		f.write("\n\n")
+		f.write(str(passage))
+
 
 timeSignatures = {
 	1.25: m21.meter.TimeSignature('5/16'),
