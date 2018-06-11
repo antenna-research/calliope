@@ -35,7 +35,8 @@ print("\n-----------\n-----------\n")
 passage = Passage(height=5)
 
 passage.spellout(lexicon)
-passage.print()
+
+print(passage)
 # print(passage.bars)
 print(passage.tree)
 print()
@@ -43,14 +44,12 @@ print()
 renderer = Renderer()
 renderer.render(passage, 'viola')
 
-
 # todo
-# working with multiple voices at once
+# working with multiple voices
 # 	a: make rule groups in spec sheet
 # 	b: work out feature track spellout
 # 		wrap solution; stretch solution
 #   c: leave space; strecht solution
-# record phonology/agreement, spellout to log, label it and score with timestamp
 # rests after constituents, corresponding to depth
 # add discovered lexemes, pairwise dependencies to lexicon pre-population, iteratively
 # pruning algorithm for shorter sentences over taller trees - remove random/weighted leaves from larger tree
@@ -58,4 +57,3 @@ renderer.render(passage, 'viola')
 # convince m21 to break durations into tied notes on the beat
 # other types of agreement / non-agreement / feature-checking
 # pitch plug-in / new transposition logic: exact transposition/register of lexeme given; transposition of lens depends thereon
-

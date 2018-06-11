@@ -8,7 +8,7 @@ import path
 import harmony
 
 class Passage(object):
-	"""represents a syntactic structure (wrapper for binary tree)"""
+	"""represents a syntactic structure (binary tree) together with assigned lexemes"""
 
 	def __init__(self, height=3, size=None):
 		self.tree = tree(height=height)
@@ -23,19 +23,12 @@ class Passage(object):
 			node.value = i
 			node.unify = {}
 
-		# sequence of lexeme objects constituting passage
+		# sequence of lexeme objects over tree, with feature agreement and realization data
 		self.spelling = []
 
-		# duration of each individual foot in each ligature (including any pickup)
-		self.durations = []
-
-		# duration of the pre-barline portion of each lexeme 
-		self.anacruses = []
-
-		# duration of the post-barline portion of each lexeme
-		self.stations = []
-
+		# measures lengths optimized for passage (downs at barline, syntactically dominant preferred)
 		self.bars = []
+
 
 	def __str__(self):
 		passage = []
@@ -46,21 +39,9 @@ class Passage(object):
 	def printSyntax(self):
 		print(self.tree)
 
-	def print(self):
-		lexemes = []
-		for lex in self.spelling:
-			lexemes.append({
-				'_label': lex.label,
-				'ligature': lex.cadence.ligature,
-				'function': lex.cadence.function,
-				'path': lex.cadence.path,
-				'realization': lex.realization,
-			})
-		pprint(lexemes)
-
 	def spellout(self, lexicon):
 		self.lexicon=lexicon
-		# prolonged features trickle down to leaves
+		# prolonged features trickle down until they hit a lexeme that also projects that feature
 		for node in self.tree.levelorder:
 			node.lexeme = lexicon.selectLexeme()
 			node.value = node.lexeme.label
@@ -90,7 +71,6 @@ class Passage(object):
 		# read out nodes into list
 		for node in self.tree.inorder:
 			next_lexeme = node.lexeme # deepcopy(node.lexeme)
-			# prolonged features replace lexical features, unless lexeme projects that feature itself
 			reprojectedFeatures = []
 			for feat in node.unify.keys():
 				if feat in next_lexeme.government['prolongation'] or next_lexeme.government['anticipation']:
@@ -129,12 +109,11 @@ class Passage(object):
 
 	def setMeter(self, minimumMetricUnit):
 		durations = self.getDurations(self.spelling, minimumMetricUnit)
-		pickupBar = max([fl(ceil(-self.anacruses[0])),2.0])
+		pickupBar = max([fl(ceil(-self.anacrusis(0))),2.0])
 		bars = []
-		for i in range(len(self.stations)-1):
-			bars.append(self.stations[i]-self.anacruses[i+1])
-		bars.append(self.stations[-1])
-		# partitionedBars = self.partition(bars, self.tree)
+		for i in range(len(self.spelling)-1):
+			bars.append(self.station(i)-self.anacrusis(i+1))
+		bars.append(self.station(-1))
 
 		removedIndices = []
 		prolongedIndices = []
@@ -149,6 +128,9 @@ class Passage(object):
 		bars.insert(0, pickupBar)
 		self.bars = bars
 		return bars
+
+	def setTandemMeter(self, others, minimumMetricUnit):
+		pass
 
 	def desliceBars(self, bars, removedIndices, prolongedIndices):
 		# targets = [bar < 2.5 for bar in bars]
@@ -206,47 +188,11 @@ class Passage(object):
 
 		return bars, removedIndices, prolongedIndices
 
+	def anacrusis(self, index):
+		return self.spelling[index].realization['duration'][0]
 
-	def partition(self, bars, syntaxTree):
-
-		if syntaxTree.left: 
-			if syntaxTree.left.height > 0:
-				splitAt = syntaxTree.inorder.index(syntaxTree.left.inorder[-1])
-				leftBars = bars[0:splitAt+1]
-				leftBars = self.partition(leftBars, syntaxTree.left)
-			else:
-				leftIndex = syntaxTree.inorder.index(syntaxTree.left.inorder[-1])
-				leftBars = bars[leftIndex]
-		else:
-			leftBars = None
-
-		if syntaxTree.right: 
-			if syntaxTree.right.height > 0:
-				splitAt = syntaxTree.inorder.index(syntaxTree.right.inorder[0])
-				rightBars = bars[splitAt:]
-				rightBars = self.partition(rightBars, syntaxTree.right)
-				if isinstance(rightBars, float) or isinstance(rightBars, int):
-					rightBars = [bars[splitAt-1], rightBars]
-				else:
-					rightBars.insert(0, bars[splitAt-1])
-			else:
-				rightIndex = syntaxTree.inorder.index(syntaxTree.right.inorder[0])
-				rightBars = bars[rightIndex-1:rightIndex+1]
-		else:
-			# rightIndex = syntaxTree.inorder.index(syntaxTree.right.inorder[-1])
-			rightBars = bars[-1]
-
-		if leftBars != None and rightBars != None:
-			newBars = [leftBars, rightBars]
-		elif leftBars != None:
-			newBars = leftBars
-		elif rightBars != None:
-			newBars = rightBars
-		else:
-			newBars = []
-
-		return newBars
-
+	def station(self, index):
+		return self.spelling[index].realization['duration'][1]
 
 	def getDurations(self, spelling, minimumMetricUnit=0.5):
 		durations = []
@@ -292,23 +238,22 @@ class Passage(object):
 
 			durations.append(subdurations)
 
-		self.durations = durations
-		self.anacruses = anacruses
-		self.stations = [sum(self.durations[i]) + self.anacruses[i] for i in range(len(durations))]
+		stations = [sum(durations[i]) + anacruses[i] for i in range(len(durations))]
+		for i, lexeme in enumerate(self.spelling):
+			lexeme.realization['duration'] = (anacruses[i], stations[i])
 		return durations
 
 	def fitToInstrument(self, instrument):
 		floor, ceiling = (instrument.lowestNote.ps, instrument.highestNote.ps)
-		self.fitConstituent(self.tree, floor, ceiling)
+		self.fitConstituentToInstrument(self.tree, floor, ceiling)
 
-	def fitConstituent(self, constituent, floor, ceiling):
+	def fitConstituentToInstrument(self, constituent, floor, ceiling):
 		pitches = []
 		for node in constituent.inorder:
 			for i, target in enumerate(node.lexeme.realization['outline']):
 				pitches.append(target + node.lexeme.realization['lens'][i])
 		pitchReference = deepcopy(pitches)
 		shift = 0
-		print(pitchReference)
 		while min(pitchReference) > floor+12:
 			pitchReference = [pitch-12 for pitch in pitchReference]
 			print(pitchReference)
@@ -318,12 +263,8 @@ class Passage(object):
 			print(pitchReference)
 			shift += 12
 		if max(pitchReference) > ceiling and constituent.left and constituent.right: # and constituent.left.min_leaf_depth>1 and constituent.right.min_leaf_depth>1:
-			self.fitConstituent(constituent.left, floor, ceiling)
-			self.fitConstituent(constituent.right, floor, ceiling)
+			self.fitConstituentToInstrument(constituent.left, floor, ceiling)
+			self.fitConstituentToInstrument(constituent.right, floor, ceiling)
 		else:
-			print(constituent)
-			print(min(pitchReference), floor, max(pitchReference), ceiling)
-			print(constituent.left)
-			print(constituent.right)
 			for node in constituent.inorder:
 				node.lexeme.realization['shift'] = shift

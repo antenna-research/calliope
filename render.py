@@ -22,7 +22,7 @@ class Renderer(object):
 			part.append(m)
 		measures = part.getElementsByClass('Measure')
 
-		incrementPairs = [[passage.anacruses[i], passage.stations[i]] for i in range(len(passage.stations)) ]
+		incrementPairs = [list(passage.spelling[i].realization['duration']) for i in range(len(passage.spelling)) ]
 		increments = []
 		for pair in incrementPairs:
 			increments.extend(pair)
@@ -132,7 +132,6 @@ class Renderer(object):
 				measure.padAsAnacrusis()
 			measure.makeRests(fillGaps=True, timeRangeFromBarDuration=True)
 			measure.timeSignature = measure.bestTimeSignature()
-
 
 		heading = self.makeHeading()
 
@@ -370,7 +369,6 @@ def initializeInstruments():
 	for name in instruments:
 		inst = instruments[name]
 		inst.name = name
-		print(name)
 		inst.highestNote = m21.pitch.Pitch()
 		if name in ['glockenspiel','vibraphone','marimba','bass_marimba','celesta','tubular_bells','timpani']:
 			inst.lowestNote = m21.pitch.Pitch()
