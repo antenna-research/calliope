@@ -1,59 +1,41 @@
 from grammar import *
 
 ligatureRules = [
+	# [{
+	# 	'span': [2.0],
+	# 	'gait': ['double'],
+	# 	'foot': [[0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2]],
+	# 	'sync': [[0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0]],
+	# }],
+	# [{
+	# 	'span': [3.0, 5.0, 6.0],
+	# 	'gait': ['trip_sl', 'trip_ls', 'double'],
+	# 	'foot': [[0, 1/2], [0]],
+	# 	'sync': [[0]],
+	# }],
 	[{
-		'span': [0.5, 1.0, 1.5],
-		'gait': ['double'],
-		'foot': [[0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2]],
-		'sync': [[0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0]],
-	}],
-	[{
-		'span': [0.5, 1.5],
-		'gait': ['double'],
-		'foot': [[0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2]],
-		'sync': [[0], [0], [0], [0], [0], [0], [0], [0]],
-	}],
-	[{
-		'span': [0.5, 1.5],
-		'gait': ['double'],
-		'foot': [[0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2]],
-		'sync': [[0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0]],
-	}],
-	[{
-		'span': [0.5, 1.5],
-		'gait': ['double'],
-		'foot': [[0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2], [0], [0]],
-		'sync': [[0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [1/2], [1/2]],
-	}],
-	[{
-		'span': [0.5, 1.5],
-		'gait': ['double'],
-		'foot': [[-1/2, 0], [-1/2, 0], [-1/2, 0], [-1/2, 0], [-1/2, 0], [-1/2, 0], [-1/2, 0], [-1/2, 0]],
-		'sync': [[0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0]],
+		'span': [3.0, 5.0],
+		'gait': ['double','trip_sl'],
+		'foot': [[0]],
+		'sync': [[0]],
 	}],
 	[{
 		'span': [0.5, 1.0],
-		'gait': ['double'],
-		'foot': [[-1/2, 0], [-1/2, 0], [-1/2, 0], [-1/2, 0]],
-		'sync': [[0], [0], [0], [0], [0], [0], [0], [0]],
+		'gait': ['double','trip_sl'],
+		'foot': [[-1/2, 0, 1/2], [0, 1/2], [0, 1/2], [0, 1/2]],
+		'sync': [[0]],
 	}],
 	[{
 		'span': [0.5, 1.0],
-		'gait': ['double'],
-		'foot': [[-1/2, 0], [-1/2, 0], [-1/2, 0], [0, 1/2], [0, 1/2]],
-		'sync': [[0], [0], [0], [0], [0], [0], [0], [0], [0], [0]],
+		'gait': ['double','trip_sl'],
+		'foot': [[-1/2, 0, 1/2], [0, 1/2]],
+		'sync': [[0]],
 	}],
 	[{
 		'span': [0.5, 1.0],
-		'gait': ['double'],
-		'foot': [[-1/2, 0], [-1/2, 0], [-1/2, 0], [-1/2, 0]],
-		'sync': [[0], [0], [0], [0], [0], [0], [0], [0]],
-	}],
-	[{
-		'span': [2.0, 3.0],
-		'gait': ['double'],
-		'foot': [[0],[0]],
-		'sync': [[0,1/2],[0,1/2]],
+		'gait': ['double','trip_sl'],
+		'foot': [[-1/2, 0, 1/2], [0, 1/2], [0, 1/2]],
+		'sync': [[0]],
 	}],
 ]
 
@@ -85,59 +67,51 @@ functionRules = [
 #
 
 pathRules = [
+	# {
+	# 'range': [1,2,3],
+	# 'figure': ['saddleDown','spikeDown'],
+	# 'direction': [5],
+	# },
 	{
-	'range': [1,2,3],
-	'figure': ['saddleUp','spikeUp'],
-	'direction': [-7],
+	'range': [5,6,7],
+	'figure': ['decDown','decUp'],
+	'direction': [0,1,2],
 	},
 	{
 	'range': [1,2,3],
-	'figure': ['saddleDown','spikeDown'],
-	'direction': [5],
+	'figure': ['sawtooth1Up','sawtooth2Up','sawtooth3Up','sawtooth1Down','sawtooth2Down','sawtooth3Down'],
+	'direction': [0,1],
 	},
 	{
-	'range': [2,3],
-	'figure': ['rampUp','accUp','decUp'],
-	'direction': [-7],
-	},
-	{
-	'range': [2,3],
-	'figure': ['rampDown','accDown','decDown'],
-	'direction': [5],
-	},
-	{
-	'range': [1,3,4,7,11,18],
-	'figure': ['sawtooth2Up','sawtooth2Down','sawtooth3Up','sawtooth3Down','zigZagUp','zigZagDown'],
-	'direction': [-1],
+	'range': [1,2,4,5],
+	'figure': ['zigZagUp','zigZagDown'],
+	'direction': [0,1],
 	},
 ]
 
+
 anticipationRules = [
+	# ['transposition', 'ligature'],
+	['address','address'],
 	['transposition', 'ligature'],
-	['address', 'direction'],
-	['range', 'figure'],
-	['figure', 'address'],
-	['direction', 'transposition'],
-	['ligature'],
+	['transposition', 'span'],
+	['gait','transposition'],
+	['figure'],
 ]
 	
 	
-	
-	
-	
 prolongationRules = [
-	['transposition', 'ligature'],
-	['address', 'transposition'],
-	['range', 'figure'],
-	['figure', 'range'],
-	['direction', 'direction'],
-	['ligature', 'address'],
-	['direction', 'ligature'],
-	['transposition', 'figure'],
-	['figure', 'direction'],
-	['ligature', 'transposition'],
-	['address', 'address'],
-	['ligature'],
+	['transposition', 'transposition'],
+	['gait', 'gait'],
+	['gait', 'ligature'],
+	['transposition', 'span'],
+	['sync'],
+	# ['ligature', 'address'],
+	# ['direction', 'ligature'],
+	# ['transposition', 'figure'],
+	# ['figure', 'figure'],
+	# ['ligature', 'transposition'],
+	# ['figure'],
 ]
 
 # as patient - (yield, check, ask) # ([default] adopt given features, refuse given features, request features
@@ -147,8 +121,6 @@ prolongationRules = [
 '''
 # need something like
 projectionRules = {
-	
-
 	# produces less uniformity
 	'check': [],
 	# produces local uniformity (inflection)
@@ -157,7 +129,6 @@ projectionRules = {
 	# produces global uniformity
 	'project': [],
 	'inject': [],
-
 }
 '''
 

@@ -31,6 +31,7 @@ class Renderer(object):
 		splitLexemes = []
 		shift = 72
 		for i, lexeme in enumerate(passage.spelling):
+			# print("\n--",i,lexeme.realization['height'])
 			pickup = {
 				'_label': lexeme.label,
 				'_offsets': [offset for offset in lexeme.realization['feet'][0] if offset < 0],
@@ -97,7 +98,7 @@ class Renderer(object):
 					# calculate duration of last note accurately
 					noteEndpoints.append(increment['_nextOffset'])
 					durations = [ fl(x-y) for y, x in zip(noteEndpoints[:-1], noteEndpoints[1:]) ]
-					measure.insert(internalOffset, labels[0])
+					# measure.insert(internalOffset, labels[0])
 					# subtract from end of increment to find offsets
 					internalOffset += abs(increment['_duration'])
 					# special case for pickup bar - use duration including hidden leading rest
@@ -111,6 +112,7 @@ class Renderer(object):
 						noteOffset = internalOffset+increment['_offsets'][k]
 						# measure.append(n)
 						measure.insert(noteOffset, n)
+
 				# if duration is positive, is station
 				if increment['_duration'] > 0:
 					noteEndpoints = copy(increment['_offsets'])
@@ -118,7 +120,7 @@ class Renderer(object):
 					noteEndpoints.append(abs(increment['_duration']))
 					durations = [ fl(x-y) for y, x in zip(noteEndpoints[:-1], noteEndpoints[1:]) ]
 					# add to beginning of increment to find offsets
-					measure.insert(internalOffset, labels[1])
+					# measure.insert(internalOffset, labels[1])
 					for k, duration in enumerate(durations):
 						n = m21.note.Note()
 						n.quarterLength = duration
@@ -165,12 +167,13 @@ class Renderer(object):
 		word_site = "http://svnweb.freebsd.org/csrg/share/dict/words?view=co&content-type=text/plain"
 		response = requests.get(word_site)
 		words = response.content.splitlines()
-		title = choice(words).decode("utf-8").capitalize()
+		# title = choice(words).decode("utf-8").capitalize()
+		title = ''
 		return (timestamp, title, date)
 
 	def writeLog(self,passage,heading):
 		""" write log file """
-		f = open("/Users/home/Documents/top/shelf/composition/framework/_log/"+heading[0]+"-"+heading[1]+".txt", 'w')
+		f = open("/Users/home/Documents/top/projects/precarity/framework/_log/"+heading[0]+"-"+heading[1]+".txt", 'w')
 		f.write(str(passage.lexicon))
 		f.write("\n\n")
 		f.write(str(passage.tree))
@@ -282,7 +285,7 @@ instruments = {
 
 
 instrumentRanges = {
-	'violin': 32,
+	'violin': 30,
 	'viola': 30,
 	'cello': 32,
 	'double bass': 39,
@@ -294,7 +297,7 @@ instrumentRanges = {
 	'trombone': 32,
 	'trumpet': 27,
 	'piccolo': 26,
-	'flute': 32,
+	'flute': 20,
 	'alto_flute': 36,
 	'oboe': 30,
 	'cor_anglais': 29,
@@ -309,7 +312,7 @@ instrumentRanges = {
 	'baritone': 32,
 	'tenor': 32,
 	'alto': 32,
-	'soprano': 32,
+	'soprano': 22,
 	'glockenspiel': 29,
 	'xylophone': 43,
 	'vibraphone': 36,

@@ -27,12 +27,12 @@ render.py 		list of n passages rendered to music21 score object
 # g.morphology.print()
 
 lexicon = Lexicon()
-lexicon.populate(g, 5)
+lexicon.populate(g, 4)
 
 lexicon.print()
 print("\n-----------\n-----------\n")
 
-passage = Passage(height=5)
+passage = Passage(height=8)
 
 passage.spellout(lexicon)
 
@@ -42,7 +42,7 @@ print(passage.tree)
 print()
 
 renderer = Renderer()
-renderer.render(passage, 'viola')
+renderer.render(passage, 'flute')
 
 # todo
 # working with multiple voices
